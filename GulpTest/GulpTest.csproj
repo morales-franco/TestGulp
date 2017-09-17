@@ -193,7 +193,9 @@
     <Content Include="src\systemjs.config.extras.js" />
     <Content Include="src\systemjs.config.js" />
     <Content Include="styles.css" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
