@@ -90,3 +90,66 @@ paths: {
 export class AppComponent  {
 
 }
+
+-------------------------------
+WebConfig
+https://stackoverflow.com/questions/12614072/how-do-i-configure-iis-for-url-rewriting-an-angularjs-application-in-html5-mode/26152011#26152011
+
+REWRITE sirve para reescribir urls, or ejemplo:
+Se pueden reescribir las url 
+http://localhost/article/342/some-article-title
+a:
+http://localhost/article.aspx?id=342&title=some-article-title.
+
+
+En angular podemos hacer que cuando el usuario ingrese una url en el browser, o presione enter al cargarse todo de nuevo, ya que ese es el 
+comportamiento default de una SPA no rompan las url base ejemplo:
+
+Estamos en : http://localhost/GulpTest/personas
+y presionamos enter 
+se genera un request a : http://localhost/GulpTest/personas y esto da un 404 porque no existe un Controller Personas -->Explota
+
+Si seteamos el <action type="Rewrite" url="/GulpTest/" />
+Al presionar enter se genera un request http://localhost/GulpTest/personas
+lo intercepta el IIS y reescribe la url y lo dirige a http://localhost/GulpTest/
+esto genera un request al home/index que devuelve la pagina SPA y por lo tanto queda todo transparente y no explota.
+
+Configuración (Sugerida por angular): 
+
+  <system.webServer>
+    <rewrite>
+      <rules>
+        <rule name="Angular Routes" stopProcessing="true">
+          <match url=".*" />
+          <conditions logicalGrouping="MatchAll">
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="/GulpTest/" />
+        </rule>
+      </rules>
+    </rewrite> 
+    <handlers>
+      <remove name="ExtensionlessUrlHandler-Integrated-4.0" />
+      <remove name="OPTIONSVerbHandler" />
+      <remove name="TRACEVerbHandler" />
+      <add name="ExtensionlessUrlHandler-Integrated-4.0" path="*." verb="*" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+    </handlers>
+    <validation validateIntegratedModeConfiguration="false" />
+    <modules>
+      <remove name="ApplicationInsightsWebTracking" />
+      <add name="ApplicationInsightsWebTracking" type="Microsoft.ApplicationInsights.Web.ApplicationInsightsHttpModule, Microsoft.AI.Web" preCondition="managedHandler" />
+    </modules>
+  </system.webServer>
+
+
+Notas Deployment:
+
+Url Deployment: http://localhost/GulpTest/
+
+WebConfig:
+  <action type="Rewrite" url="/GulpTest/" />
+Coincide con la base html
+  <base href="/GulpTest/"> (base html)
+
+Url Rewrite = base HTML
