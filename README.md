@@ -147,7 +147,7 @@ Notas Deployment:
 
 Url Deployment: http://localhost/GulpTest/
 
-WebConfig: <action type="Rewrite" url="/GulpTest/" />
-Coincide con la base html : <base href="/GulpTest/">
+WebConfig: < action type="Rewrite" url="/GulpTest/" />
+Coincide con la base html : base href="/GulpTest/">
 
 Url Rewrite = base HTML
